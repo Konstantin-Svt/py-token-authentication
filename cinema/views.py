@@ -151,7 +151,10 @@ class OrderViewSet(
     ]
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        qs = self.queryset
+        if self.request.user.is_authenticated and not self.request.user.is_staff:
+            return qs.filter(user=self.request.user)
+        return qs
 
     def get_serializer_class(self):
         if self.action == "list":
